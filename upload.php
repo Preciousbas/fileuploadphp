@@ -23,7 +23,8 @@ $conn = mysqli_connect($localhost, $dbusername, $dbpassword, $dbname);
 if (isset($_POST['Submit']))
 {
 	#filename with a random number so that similar files don't exist
-	$pname = rand(1000, 10000). '-'.$_FILES['file']['name'];
+	$uploads_dir ='C:\xampp\htdocs';
+	$pname =$uploads_dir . basename($_FILES['file']['name']);
 
 	#to check if it's an actual file
 	$check = filesize($_FILES["file"]["tmp_name"]);
@@ -48,23 +49,28 @@ if (isset($_POST['Submit']))
   	$UploadOk = 0;
   }
 
-	#temporary filename to store files
+	#if it fails to upload
 	//$tname = $_FILES['files']['tmp_name'];
-
+  	if ($uploadOk == 0) {
+  		echo 'Sorry, your file was not uploaded.';
+  	} else{ 
 	#upload directory
-	$uploads_dir ='/documents';
-
-	move_uploaded_file($pname, $uploads_dir.'/'.$pname);
-
-	#sql query to put in database
-	$sql ='INSERT into fileup(file) VALUES("$pname")';
-	if(mysqli_query($conn,$sql)){
-		echo'File Successfully Uploaded'; 
-	}
-	else{
-		echo 'Error in uploading file';
+		if(move_uploaded_file($_FILES ['file']['tmp_name'],$pname)){
+			echo'File Successfully Uploaded'; 
+		}else{
+			echo 'Error in uploading file';
+		}
 	}
 }
+	#sql query to put in database
+	//$sql ='INSERT into fileup(file) VALUES("$pname")';
+	//if(mysqli_query($conn,$sql)){
+	//	echo'File Successfully Uploaded'; 
+	//}
+	//else{
+	//	echo 'Error in uploading file';
+	//}
+
 
 	#upload directory path/extension
 	//$fileExtension = pathinfo($pname, PATHINFO_EXTENSION);
@@ -85,6 +91,3 @@ if (isset($_POST['Submit']))
 		//if(!$run){
 		//	die('Error in uploading file'.mysql_error());
 		//}else{?>
-		
-
-
